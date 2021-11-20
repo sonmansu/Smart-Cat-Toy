@@ -1,4 +1,4 @@
-int PIR = D8;                      // PIR을 2로 설정합니다.
+int PIR = D10;                      // PIR을 2로 설정합니다.
 void setup() {
   Serial.begin(9600);        // 시리얼 통신을 사용하기 위해 보드레이트를 9600으로 설정합니다.
   pinMode(PIR, INPUT);   // PIR를 입력핀으로 설정합니다.
