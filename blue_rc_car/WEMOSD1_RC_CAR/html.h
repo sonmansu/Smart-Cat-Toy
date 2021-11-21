@@ -1,6 +1,7 @@
 const char MAIN_page[] PROGMEM = R"=====(
 <HTML>
   <HEAD>
+    <title>ESP8266 WiFi Car</title>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <TITLE>My first web page</TITLE>
@@ -13,7 +14,7 @@ const char MAIN_page[] PROGMEM = R"=====(
           border:1px solid green;
           border-radius: 6px;
          }
-         iframe { 
+         iframe {
             overflow: hidden;
             pointer-events: none;
             background-color: #F7BE81;
@@ -25,26 +26,22 @@ const char MAIN_page[] PROGMEM = R"=====(
       </style>
   </HEAD>
 <BODY>
-  <h1>
-      <B>ESP8266 Web Server</B>
-  </h1> 
-  <p>홈오토메이션 관리자 페이지</p>
-
-  <div class="wrapper">
-    LED State:<iframe id="ifResult" name="myIframe" width="100%" height="30" frameBorder="0" scrolling="no"></iframe>
-    <h3>조명제어</h3>
-    <a href="/ledOn" target="myIframe"><button id="ledOn">거실조명 켜기</button></a>
-    <a href="/ledOff" target="myIframe"><button id="ledOff">거실조명 끄기</button></a>
-  </div>
-  <div class="wrapper">
-    <h3>TV 제어</h3>
-    <button>TV 켜기</button>
-    <button>TV 끄기</button>
-  </div>
-  
-  <script>
-    
-  </script>
+    <div align="center">
+    <h1>ESP8266 WiFi Car</h1>
+    <h2>Press "stop" after the server has been reset</h2>
+    <br>
+    <form method="GET">
+        <input type="button" value="Go forward" onclick="window.location.href='forward'">
+        <br><br>
+        <input type="button" value="Go backward" onclick="window.location.href='backward'">
+         <br><br>
+        <input type="button" value="Turn left" onclick="window.location.href='left'">
+        <br><br>
+        <input type="button" value="Turn right" onclick="window.location.href='right'">
+        <br><br>
+        <input type="button" value="Car stop" onclick="window.location.href='stop'">
+    </form>
+    </div>
 </BODY>
 </HTML>
 )=====";
