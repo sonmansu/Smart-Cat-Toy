@@ -12,8 +12,10 @@
 //#define CAMERA_MODEL_M5STACK_PSRAM
 #define CAMERA_MODEL_AI_THINKER
 
-const char* ssid = "KT_GiGA_2G_sumin";
-const char* password = "sumin78900";
+//const char* ssid = "KT_GiGA_2G_sumin";
+//const char* password = "sumin78900";
+const char* ssid = "winterz";
+const char* password = "201105166";
 //#define ssid            "KT_GiGA_2G_sumin" // AP server name
 //#define password        "sumin78900"         // AP server password
 

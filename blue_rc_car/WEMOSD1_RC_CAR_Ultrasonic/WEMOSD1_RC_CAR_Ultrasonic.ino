@@ -2,8 +2,9 @@
 // https://www.hackster.io/alankrantas/simple-nodemcu-wifi-controlled-car-esp8266-c5491e
  /* 위 주소의 코드를 우리 상황에 맞게 수정함
   *  1. AP mode 를 station mode로 변경
-  *  2. 핀 매핑 및 차 운전 방식은 키트 판매 싸이트 코드 따라함
+  *  2. 핀 매핑 및 차 운전 방식은 키트 판매 싸이트 코드 따라함 
   *  3. html 파일 분리 
+  *  4. 초음파센서 연결 : https://m.blog.naver.com/no1_devicemart/221312209045
   */
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
@@ -30,13 +31,15 @@
 #define RIGHT_MOTOR_SPEED 900                // speed for right motor (0-1023)
 #define LEFT_MOTOR_SPEED  900                // speed for left motor (0-1023)
 #define MOTOR_SPEED 900 //모터의 기준속력입니다(0~255)
-
 //카 운전 변수 설정
 #define GO_FORWARD 0
 #define GO_BACKWARD 1
 #define TURN_LEFT 2
 #define TURN_RIGHT 3
 #define STOP 4
+#초음파 센서
+#define ULTRASENS_T D12
+#define ULTRASENS_E D13
 
 #define LED_PIN           2                   // built-in LED (D4)
 
@@ -89,8 +92,7 @@ void setup() {
   //start server
   server.begin();
   Serial.println("ESP8266 car server started.");
-  digitalWrite(LED_PIN, LOW);
-
+  
   SendHTML = MAIN_page;
 
 }
@@ -167,7 +169,7 @@ void car_control() {
       analogWrite(RIGHT_MOTOR_PIN1, MOTOR_SPEED);
       digitalWrite(RIGHT_MOTOR_PIN2, LOW);
       break;
-    case TURN_RIGHT: // go backward 제자리 우회전 (정방향, 역방향)
+    case TURN_RIGHT: // go backward 제자리 우회전 (역방향, 정방향)
       digitalWrite(LEFT_MOTOR_PIN1, LOW);
       analogWrite(LEFT_MOTOR_PIN2, MOTOR_SPEED);
       digitalWrite(RIGHT_MOTOR_PIN1, LOW);
@@ -186,34 +188,4 @@ void car_control() {
       analogWrite(RIGHT_MOTOR_PIN2, MOTOR_SPEED);
   }
 }
-
-//// output HTML web page for user
-//String SendHTML() {
-//  String html = "<!DOCTYPE html>";
-//  html += "<html>";
-//  html += "<head>";
-//  html += "<title>ESP8266 WiFi Car</title>";
-//  html += "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">";
-//  html += "<style>body {background-color: Moccasin;} h1 {color: SaddleBrown;} h2 {color: Olive;}</style>";
-//  html += "</head>";
-//  html += "<body>";
-//  html += "<div align=\"center\">";
-//  html += "<h1>ESP8266 WiFi Car</h1>";
-//  html += "<h2>Press \"stop\" after the server has been reset</h2>";
-//  html += "<br>\n";
-//  html += "<form method=\"GET\">";
-//  html += "<input type=\"button\" value=\"Go forward\" onclick=\"window.location.href='/forward'\">";
-//  html += "<br><br>\n";
-//  html += "<input type=\"button\" value=\"Go backward\" onclick=\"window.location.href='/backward'\">";
-//  html += "<br><br>\n";
-//  html += "<input type=\"button\" value=\"Turn left\" onclick=\"window.location.href='/left'\">";
-//  html += "<br><br>\n";
-//  html += "<input type=\"button\" value=\"Turn right\" onclick=\"window.location.href='/right'\">";
-//  html += "<br><br>\n";
-//  html += "<input type=\"button\" value=\"Car stop\" onclick=\"window.location.href='/stop'\">";
-//  html += "</form>\n";
-//  html += "</div>\n";
-//  html += "</body>\n";
-//  html += "</html>\n";
-//  return html;
-//}
+]

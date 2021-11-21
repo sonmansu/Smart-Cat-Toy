@@ -1,14 +1,16 @@
-//https://www.youtube.com/watch?v=ZsvNVPCetmI&ab_channel=H_World 보고 서보모터 소음잡는 코드로 수정
+A//https://www.youtube.com/watch?v=ZsvNVPCetmI&ab_channel=H_World 보고 서보모터 소음잡는 코드로 수정
 #include <Servo.h>
 Servo myservo; // create servo object to control a servo
 int pos = 0; // variable to store the servo position
-int powerButton = D12;
+//int powerButton = D12;
+
 int servoAngle = 0;
 void setup()
 {
   // attaches the servo on pin 10 to the servo object
   Serial.begin(9600);
   myservo.attach(D11);
+//  myservo.attach(5);//node mcu에서 d1
 }
 
 void loop()
