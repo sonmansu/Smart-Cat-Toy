@@ -11,8 +11,10 @@
 #include "html.h"
 
 // WiFi settings
-#define WIFI_SSID            "KT_GiGA_2G_sumin" // AP server name
-#define WIFI_PASSWORD        "sumin78900"         // AP server password
+//#define WIFI_SSID            "KT_GiGA_2G_sumin" // AP server name
+//#define WIFI_PASSWORD        "sumin78900"         // AP server password
+#define WIFI_SSID "JJH"
+#define WIFI_PASSWORD "Jeonjinhyeok0204"
 //#define SSID_AP            "ESP8266_WiFi_Car" // AP server name
 //#define PASSWORD_AP        "12345678"         // AP server password
 
@@ -37,7 +39,7 @@
 #define TURN_LEFT 2
 #define TURN_RIGHT 3
 #define STOP 4
-#초음파 센서
+//초음파 센서
 #define ULTRASENS_T D12
 #define ULTRASENS_E D13
 
@@ -188,4 +190,3 @@ void car_control() {
       analogWrite(RIGHT_MOTOR_PIN2, MOTOR_SPEED);
   }
 }
-]
