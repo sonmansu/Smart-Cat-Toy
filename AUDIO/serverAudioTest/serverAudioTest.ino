@@ -1,58 +1,40 @@
 #include <ESP8266WiFi.h>
+#include <ESP8266WebServer.h>
+#include "web.h"
 
-const char* ssid = "KT_GiGA_2G_sumin";
-const char* password = "sumin78900";
+#define WIFI_SSID            "KT_GiGA_2G_sumin" // AP server name
+#define WIFI_PASSWORD        "sumin78900"         // AP server password
 
-WiFiServer server(80);
+
+IPAddress local_ip(172, 30, 1, 130); // 사용할 IP 주소
+IPAddress gateway(172, 30, 1, 254); // 게이트웨이 주소
+IPAddress subnet(255, 255, 255, 0); // 서브넷 주소
+ESP8266WebServer server(80);
+
+
+String sendHtml;
 
 void setup() {
   delay(10);
-
   Serial.begin(115200);
-
-  Serial.println();
-  Serial.println();
-  Serial.println("connecting to my ssid.");
   
-  WiFi.begin(ssid, password);  
-   while (WiFi.status() != WL_CONNECTED) {
-   delay(500);
-   Serial.println(".");
+  WiFi.config(local_ip, gateway, subnet);
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  Serial.print("connecting");
+  while (WiFi.status() != WL_CONNECTED) {
+    Serial.print(".");
+    delay(500);
   }
-  
-  Serial.println("");
-  Serial.println("WiFi connected");
+  Serial.println();
+  Serial.print("connected: ");
+  Serial.println(WiFi.localIP());
 
-  // start the server
   server.begin();
-  Serial.println("Server started");
-  Serial.println("Use this URL to connect");
-  Serial.print("http://");
-  Serial.print(WiFi.localIP());
-  Serial.println("/");
+  Serial.println("ESP8266 server started.");
+  sendHtml = MAIN_page;
 }
 
 void loop() {
-  WiFiClient client = server.available();  
-
-  if(!client){
-    return;
-  }
-  else{
-    Serial.println("New client connect...");
-    boolean blank_line = true;
-    while(client.connected()){
-      char c = client.read();
-      if(c == '\n' && blank_line){
-        client.println("HTTP/1.1 200 OK");
-        client.println("Content-Type: text/html");
-        client.println("Connection: close");
-        client.println();
-
-        client.println("<!DOCTYPE html>");
-        client.println("")
-      }
-    }
-  }
-
+  server.handleClient();
+  server.send(200, "text/html", sendHtml);
 }
