@@ -29,12 +29,20 @@ void setup() {
   Serial.print("connected: ");
   Serial.println(WiFi.localIP());
 
+    server.on("/", handle_OnConnect);
+
+
   server.begin();
   Serial.println("ESP8266 server started.");
   sendHtml = MAIN_page;
 }
+void handle_OnConnect() {
+//  car_mode = 0;
+  Serial.println("Client connected");
+  server.send(200, "text/html", sendHtml);
+}
 
 void loop() {
   server.handleClient();
-  server.send(200, "text/html", sendHtml);
+//  server.send(200, "text/html", sendHtml);
 }
