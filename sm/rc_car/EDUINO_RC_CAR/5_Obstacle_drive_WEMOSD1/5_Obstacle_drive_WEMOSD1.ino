@@ -19,8 +19,8 @@
 int i;
 
 //초음파센서 출력핀(trig)과 입력핀(echo), 변수, 함수 선언//
-int TrigPin = D12;
-int EchoPin = D13;
+int TrigPin = D10;   //파랑선
+int EchoPin = D11;  //초록선
 long duration, distance;
 
 void Obstacle_Check();

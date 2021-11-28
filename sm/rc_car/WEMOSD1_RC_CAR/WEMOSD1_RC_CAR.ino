@@ -1,3 +1,4 @@
+//웹으로 제어하는 예제 
 // Simple WiFi-controlled car on ESP8266 and L9110S motor drive board by Alan Wang
 // https://www.hackster.io/alankrantas/simple-nodemcu-wifi-controlled-car-esp8266-c5491e
  /* 위 주소의 코드를 우리 상황에 맞게 수정함
@@ -10,11 +11,11 @@
 #include "html.h"
 
 // WiFi settings
-//#define WIFI_SSID            "KT_GiGA_2G_sumin" // AP server name
-//#define WIFI_PASSWORD        "sumin78900"         // AP server password
+#define WIFI_SSID            "KT_GiGA_2G_sumin" // AP server name
+#define WIFI_PASSWORD        "sumin78900"         // AP server password
 
-#define WIFI_SSID            "winterz" // AP server name
-#define WIFI_PASSWORD        "201105166"         // AP server password
+//#define WIFI_SSID            "winterz" // AP server name
+//#define WIFI_PASSWORD        "201105166"         // AP server password
 
 //#define SSID_AP            "ESP8266_WiFi_Car" // AP server name
 //#define PASSWORD_AP        "12345678"         // AP server password
@@ -31,9 +32,10 @@
 #define RIGHT_MOTOR_PIN1  D8                   // 오른쪽모터의 +출력핀 초록
 #define RIGHT_MOTOR_PIN2  D9                  // 왼쪽모터의 -출력핀 파랑
 //원래 값 1023은 너무빠른데 삐소리아예 안남. 800은 적당한데 삐소리가 조금나서 900으로 설정함.
-#define RIGHT_MOTOR_SPEED 900                // speed for right motor (0-1023)
-#define LEFT_MOTOR_SPEED  900                // speed for left motor (0-1023)
-#define MOTOR_SPEED 900 //모터의 기준속력입니다(0~255)
+//900도 뭔가 밀어줘야 앞으로 나가서 걍 1000으로함..  (6v전압기준) 
+#define RIGHT_MOTOR_SPEED 1000                // speed for right motor (0-1023)
+#define LEFT_MOTOR_SPEED  1000                // speed for left motor (0-1023)
+#define MOTOR_SPEED 1000 //모터의 기준속력입니다(0~255)
 
 //카 운전 변수 설정
 #define GO_FORWARD 0
