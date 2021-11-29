@@ -40,6 +40,9 @@ const char MAIN_page[] PROGMEM = R"=====(
         <input type="button" value="Turn right" onclick="window.location.href='right'">
         <br><br>
         <input type="button" value="Car stop" onclick="window.location.href='stop'">
+
+        <br><br>
+        <input type="button" value="Obstacle drive" onclick="window.location.href='obstacle'">
     </form>
     </div>
 </BODY>

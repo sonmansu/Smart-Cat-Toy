@@ -19,7 +19,7 @@
 //#define ULTRASENS_T D10  //초음파센서 트리거 출력핀은 13번핀입니다.
 //#define ULTRASENS_E D11  //초음파센서 에코 입력핀은 12번핀입니다.
 //#define SERVO_PIN 9     //서보모터 제어용 출력핀은 9번핀 입니다.
-#define TURN90  160     //제자리 90도 회전 Delay
+#define TURN90  360     //제자리 90도 회전 Delay
 int trigPin = D12;
 int echoPin = D13;
 //Servo servo;           //서보 제어용 변수 선언
@@ -58,80 +58,65 @@ void setup()
 
 void loop()
 {
-  dodgewall_val();  //입력된 데이터에 따라 모터에 입력될 변수를 조정하는 함수
-  //  motor_drive();  //모터를 구동하는 함수
-//  delay(100);
+  Forward(1000);
+  delay(100);
+  Obstacle_Check();
 }
 
-void dodgewall_val() //입력된 데이터에 따라 모터에 입력될 변수를 조정하는 함수
-{
-  long distance = 0, distance_r = 0, distance_l = 0; //전방, 좌/우의 거리 변수 선언
-  //  distance = howclose();  //전방 거리측정
-  distance = Distance_Measurement();  //전방 거리측정
-  Serial.println((String) "dodgewall함수내 distance: " + distance);
+void Obstacle_Check() {
+  int val = random(2);
+  long distance = Distance_Measurement();
 
-  if (distance > 60)      //전방 거리가 60cm 초과일때 빠르게 전진
-  {
-    Forward(1023);
-  }
-  else if (distance > 30) //전방 거리가 30cm 초과일때 보통 속도로 전진
-  {
-    Forward(1000);
-  }
-  else if (distance > 15) //전방 거리가 30cm 이하일때 장애물 회피
-  {
-    Stop();
-    delay(500);
-    int val = random(2);
-    if (val == 0) {
-      Right(1000);
-      delay(TURN90);
+  Serial.println((String) "함수내: " + distance);
+  
+  while (distance < 20) {
+    if (distance < 18) {
+      Serial.println(distance);
+      Backward(1000);
+      delay(250);
+      Stop();
+      delay(50);
+      Distance_Measurement();
     }
-    else if (val == 1) {
-      Left(1000);
-      delay(TURN90);
+    else {
+      if (val == 0) {
+        Right(1000);
+        delay(400);
+      }
+      else if (val == 1) {
+        Left(1000);
+        delay(400);
+      }
+      Distance_Measurement();
     }
-    Stop();
-    delay(1000);    //정지 상태로 잠시 대기
-  } else { //전방거리 15센치 이하일떄 
-    Right(1000);
-    delay(TURN90*2);
   }
 }
+
 void Forward(int MOTOR_SPEED) {
-  Serial.println("Go forward...");
   digitalWrite(LEFT_MOTOR_PIN1, LOW);
   analogWrite(LEFT_MOTOR_PIN2, MOTOR_SPEED);
   analogWrite(RIGHT_MOTOR_PIN1, MOTOR_SPEED);
   digitalWrite(RIGHT_MOTOR_PIN2, LOW);
 }
 void Backward(int MOTOR_SPEED) {
-    Serial.println("Go backward...");
-
   analogWrite(LEFT_MOTOR_PIN1, MOTOR_SPEED);
   digitalWrite(LEFT_MOTOR_PIN2, LOW);
   digitalWrite(RIGHT_MOTOR_PIN1, LOW);
   analogWrite(RIGHT_MOTOR_PIN2, MOTOR_SPEED);
 }
 void Left(int MOTOR_SPEED) {
-    Serial.println("Turn left...");
-
   analogWrite(LEFT_MOTOR_PIN1, MOTOR_SPEED);
   digitalWrite(LEFT_MOTOR_PIN2, LOW);
   analogWrite(RIGHT_MOTOR_PIN1, MOTOR_SPEED);
   digitalWrite(RIGHT_MOTOR_PIN2, LOW);
 }
 void Right(int MOTOR_SPEED) {
-    Serial.println("Turn right...");
-
   digitalWrite(LEFT_MOTOR_PIN1, LOW);
   analogWrite(LEFT_MOTOR_PIN2, MOTOR_SPEED);
   digitalWrite(RIGHT_MOTOR_PIN1, LOW);
   analogWrite(RIGHT_MOTOR_PIN2, MOTOR_SPEED);
 }
 void Stop() {
-    Serial.println("Stopped");
-
   digitalWrite(LEFT_MOTOR_PIN1, LOW);
   digitalWrite(LEFT_MOTOR_PIN2, LOW);
   digitalWrite(RIGHT_MOTOR_PIN1, LOW);
@@ -152,20 +137,6 @@ void Stop() {
 //  return distance;                  //측정 거리값 리턴
 //}
 
-long get_distance() {
-  long duration, distance;
-  digitalWrite(trigPin, LOW);
-  delay(2);
-  digitalWrite(trigPin, HIGH);                        // trigPin에서 초음파 발생(echoPin도 HIGH)
-  delayMicroseconds(10);
-  digitalWrite(trigPin, LOW);
-  duration = pulseIn(echoPin, HIGH);                  // echoPin 이 HIGH를 유지한 시간을 저장 한다.
-  distance = ((float)(340 * duration) / 1000) / 2;
-  Serial.print("distance:");                          // 물체와 초음파 센서간 거리를 표시
-  Serial.print(distance);
-  Serial.println("mm");
-  return distance;
-}
 
 long Distance_Measurement() {
   long duration, distance;
@@ -182,33 +153,3 @@ long Distance_Measurement() {
   delay(500);
   return distance;
 }
-
-//void motor_drive()  //모터를 구동하는 함수
-//{
-//  if (m_a_dir == 0)
-//  {
-//    digitalWrite(MOTOR_A_a, LOW);     //모터A+ LOW
-//    analogWrite(MOTOR_A_b, m_a_spd);  //모터A-의 속력을 PWM 출력
-//  }
-//  else
-//  {
-//    analogWrite(MOTOR_A_a, m_a_spd);  //모터A+의 속력을 PWM 출력
-//    digitalWrite(MOTOR_A_b, LOW);     //모터A- LOW
-//  }
-//  if (m_b_dir == 1)
-//  {
-//    digitalWrite(MOTOR_B_a, LOW);     //모터B+ LOW
-//    analogWrite(MOTOR_B_b, m_b_spd);  //모터B-의 속력을 PWM 출력
-//  }
-//  else
-//  {
-//    analogWrite(MOTOR_B_a, m_b_spd);  //모터B+의 속력을 PWM 출력
-//    digitalWrite(MOTOR_B_b, LOW);     //모터B- LOW
-//  }
-//}
-//
-//void servo_drive(unsigned char deg) //서보모터를 구동하는 함수
-//{
-//  deg = constrain(deg, 0, 180); //구동범위를 0도에서 180도로 제한
-//  servo.write(deg);             //제한된 범위로 서보모터 구동
-//}

@@ -1,3 +1,4 @@
+//이게 그나마 쓸만한 자율주행코드..
 #include <Servo.h>     //서보모터 제어함수용 헤더
 
 //우노용 핀매핑
@@ -19,7 +20,7 @@
 //#define ULTRASENS_T D10  //초음파센서 트리거 출력핀은 13번핀입니다.
 //#define ULTRASENS_E D11  //초음파센서 에코 입력핀은 12번핀입니다.
 //#define SERVO_PIN 9     //서보모터 제어용 출력핀은 9번핀 입니다.
-#define TURN90  160     //제자리 90도 회전 Delay
+#define TURN90  600     //제자리 90도 회전 Delay
 int trigPin = D12;
 int echoPin = D13;
 //Servo servo;           //서보 제어용 변수 선언
@@ -65,23 +66,15 @@ void loop()
 
 void dodgewall_val() //입력된 데이터에 따라 모터에 입력될 변수를 조정하는 함수
 {
-  long distance = 0, distance_r = 0, distance_l = 0; //전방, 좌/우의 거리 변수 선언
-  //  distance = howclose();  //전방 거리측정
-  distance = Distance_Measurement();  //전방 거리측정
+  long distance = Distance_Measurement();  //전방 거리측정
   Serial.println((String) "dodgewall함수내 distance: " + distance);
 
-  if (distance > 60)      //전방 거리가 60cm 초과일때 빠르게 전진
-  {
-    Forward(1023);
-  }
-  else if (distance > 30) //전방 거리가 30cm 초과일때 보통 속도로 전진
+  if (distance > 30) //전방 거리가 30cm 초과일때 보통 속도로 전진
   {
     Forward(1000);
   }
-  else if (distance > 15) //전방 거리가 30cm 이하일때 장애물 회피
+  else if (distance > 20) //30>= 전방거리 > 15cm 일때 장애물 회피
   {
-    Stop();
-    delay(500);
     int val = random(2);
     if (val == 0) {
       Right(1000);
@@ -92,10 +85,14 @@ void dodgewall_val() //입력된 데이터에 따라 모터에 입력될 변수�
       delay(TURN90);
     }
     Stop();
-    delay(1000);    //정지 상태로 잠시 대기
-  } else { //전방거리 15센치 이하일떄 
-    Right(1000);
-    delay(TURN90*2);
+    delay(300); //
+  } else { //전방거리 15센치 이하일떄 뒤로감
+    Backward(1000);
+    delay(500);
+//    Right(1000);
+//    delay(TURN90*2);
+    Stop();
+    delay(300); //
   }
 }
 void Forward(int MOTOR_SPEED) {
@@ -107,7 +104,6 @@ void Forward(int MOTOR_SPEED) {
 }
 void Backward(int MOTOR_SPEED) {
     Serial.println("Go backward...");
-
   analogWrite(LEFT_MOTOR_PIN1, MOTOR_SPEED);
   digitalWrite(LEFT_MOTOR_PIN2, LOW);
   digitalWrite(RIGHT_MOTOR_PIN1, LOW);
@@ -115,7 +111,6 @@ void Backward(int MOTOR_SPEED) {
 }
 void Left(int MOTOR_SPEED) {
     Serial.println("Turn left...");
-
   analogWrite(LEFT_MOTOR_PIN1, MOTOR_SPEED);
   digitalWrite(LEFT_MOTOR_PIN2, LOW);
   analogWrite(RIGHT_MOTOR_PIN1, MOTOR_SPEED);
@@ -123,7 +118,6 @@ void Left(int MOTOR_SPEED) {
 }
 void Right(int MOTOR_SPEED) {
     Serial.println("Turn right...");
-
   digitalWrite(LEFT_MOTOR_PIN1, LOW);
   analogWrite(LEFT_MOTOR_PIN2, MOTOR_SPEED);
   digitalWrite(RIGHT_MOTOR_PIN1, LOW);
@@ -131,26 +125,12 @@ void Right(int MOTOR_SPEED) {
 }
 void Stop() {
     Serial.println("Stopped");
-
   digitalWrite(LEFT_MOTOR_PIN1, LOW);
   digitalWrite(LEFT_MOTOR_PIN2, LOW);
   digitalWrite(RIGHT_MOTOR_PIN1, LOW);
   digitalWrite(RIGHT_MOTOR_PIN2, LOW);
 }
-//long howclose() //초음파 센서 거리측정 함수
-//{
-//  long duration = 0, distance = 0;  //echo펄스 도달시간 변수와 거리 변수 선언
-//  digitalWrite(ULTRASENS_T, HIGH);  //Trig 핀 HIGH로 변경하여 신호 발생
-//  delayMicroseconds(10);            //10us 유지
-//  digitalWrite(ULTRASENS_T, LOW);   //Trig 핀 LOW로 초기화
-//  duration = pulseIn(ULTRASENS_E, HIGH);  //pulseIn함수가 호출되고 펄스가 입력될 때까지의 시간. us단위로 값을 리턴.
-////  distance = duration / 29 / 2;     //센치미터로 환산
-//  distance = ((float)(340 * duration) / 1000) / 2;
-////  distance /= 10;
-//  Serial.print(distance);          //시리얼모니터에 거리값 출력
-//  Serial.println("cm");              //단위 출력
-//  return distance;                  //측정 거리값 리턴
-//}
+
 
 long get_distance() {
   long duration, distance;
@@ -179,7 +159,6 @@ long Distance_Measurement() {
   distance = (float)distance/10;
   Serial.print((String) "Distance_Measurement()함수" + distance);
   Serial.println("cm");
-  delay(500);
   return distance;
 }
 
