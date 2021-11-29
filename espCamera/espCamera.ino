@@ -17,8 +17,11 @@
 
 #include "camera_pins.h"
 
-const char* ssid = "JJH";
-const char* password = "Jeonjinhyeok0204";
+//const char* ssid = "JJH";
+//const char* password = "Jeonjinhyeok0204";
+const char* ssid = "winterz";
+const char* password = "201105166";
+
 
 int pictureNumber = 0;
 
@@ -138,7 +141,10 @@ void takePicture(){ // 사진 찍는 함수
 
 void loop() {
   char c = Serial.read(); // 버튼 입력이 촬영일 경우로 바꿔야 함!
-  if(c == 'c'){takePicture();}
+  if(c == 'c'){
+    Serial.println('c');
+    takePicture();
+  }
   
   delay(10000);
 }
