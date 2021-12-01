@@ -24,6 +24,12 @@ const char MAIN_page[] PROGMEM = R"=====(
             padding: 8px;
           }
 
+        .carButton {
+            width: 100;
+            height: 100;
+            font-size: 100px;
+        }
+
     </style>
 </HEAD>
 <BODY>
@@ -47,11 +53,35 @@ const char MAIN_page[] PROGMEM = R"=====(
         <br><br>
         <input type="button" value="놀아주기" onclick="window.location.href='toy'">
 
-        </form>
+    </form>
 
-        <input type="range" min="1" max="12" id="ex-in">
-        <div id="ex-out"></div>
-        <script>
+    <form method="GET">
+<!--        https://www.hackster.io/gungoryalcin68/wifi-robot-car-rc-car-nodemcu-web-server-e8c202-->
+        <table>
+            <tr>
+                <td><p><input type="button" class="carButton" value="\" onclick="window.location.href='forward'"></p>
+                <td><p><input type="button" class="carButton" value="^" onclick="window.location.href='forward'"></p>
+                <td><p><input type="button" class="carButton" value="/" onclick="window.location.href='backward'"></p>
+            <tr>
+                <td><p><input type="button" class="carButton" value="<" onclick="window.location.href='left'"></p>
+                <td><p><input type="button" class="carButton" value="O" onclick="window.location.href='stop'"></p>
+                <td><p><input type="button" class="carButton" value=">" onclick="window.location.href='right'"></p>
+            <tr>
+                <td><p><input type="button" class="carButton" value="/" onclick="window.location.href='backward'"></p>
+                <td><p><input type="button" class="carButton" value="v" onclick="window.location.href='backward'"></p>
+                <td><p><input type="button" class="carButton" value="\" onclick="window.location.href='backward'"></p>
+        </table>
+        <br>
+        <input type="button" value="Obstacle drive" onclick="window.location.href='obstacle'">
+        <br><br>
+        <input type="button" value="놀아주기" onclick="window.location.href='toy'">
+
+    </form>
+
+
+    <input type="range" min="1" max="12" id="ex-in">
+    <div id="ex-out"></div>
+    <script>
             document.querySelector('#ex-in').addEventListener('input',e=>{
                 document.querySelector('#ex-out').innerHTML= e.target.value;
             });
