@@ -9,8 +9,10 @@
 #include "index_html.h"
 
 // Replace with your network credentials
-const char* ssid = "KT_GiGA_2G_sumin";
-const char* password = "sumin78900";
+//const char* ssid = "KT_GiGA_2G_sumin";
+//const char* password = "sumin78900";
+const char* ssid = "winterz";
+const char* password = "201105166";
 
 const int output = 2;
 
@@ -27,7 +29,7 @@ Servo myservo;
 void setup() {
   // Serial port for debugging purposes
   Serial.begin(115200);
-  myservo.attach(2);
+//  Serial.begin(9600);
   // Connect to Wi-Fi
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
@@ -37,6 +39,8 @@ void setup() {
 
   // Print ESP Local IP Address
   Serial.println(WiFi.localIP());
+
+    myservo.attach(D14);
 
   // Route for root / web page
   server.on("/", HTTP_GET, [](AsyncWebServerRequest * request) {
