@@ -11,3 +11,6 @@ int MOTOR_SPEED = 500; //모터의 기준속력입니다(0~255)
 #define STOP 4
 #define OBSTACLE 5
 #define TURN90  600     //제자리 90도 회전 Delay
+
+/*초음파센서*/
+#define SOUND_VELOCITY 340

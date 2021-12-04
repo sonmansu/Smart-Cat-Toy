@@ -1,7 +1,6 @@
 #include <ESP8266WiFi.h>
-//#include <ESP8266WebServer.h>
 #include <ESPAsyncTCP.h>
-#include <ESPAsyncWebServer.h>
+#include <ESPAsyncWebServer.h> //#include <ESP8266WebServer.h>
 #include <Servo.h>
 #include "html.h"
 #include "wifi.h"
@@ -10,7 +9,19 @@
 
 AsyncWebServer server(80);
 
+/* 플래그 변수 모음 */
+//RC카
 int car_mode = STOP;                             // set car drive mode (0 = stop)
+//서보모터_장난감 toy 
+int sliderValue = 400; //초깃값
+boolean flagToy = false;
+const char* PARAM_INPUT = "value";
+//서보모터_간식주기 door
+boolean flagDoor = false;
+Servo servoDoor;
+Servo servoToy;
+
+
 // initialize
 void setup() {
   //  Serial.begin(115200);
@@ -39,6 +50,8 @@ void setup() {
   Serial.println();
   Serial.print("connected: ");
   Serial.println(WiFi.localIP());
+
+  servoToy.attach(SERVO_TOY_PIN);
 
   // on 함수는 위에서 설명한 것과 같이 클라이언트의 요청에 따라 어떤 처리를 할 것인지 연결시켜주는 함수입니다.
   // server.on("/", HTTP_GET, handle_OnConnect);
@@ -86,18 +99,42 @@ void setup() {
   });
   server.on("/obstacle", HTTP_GET, [](AsyncWebServerRequest * request) {
     //    request->send(200, "text/plain", "OK");
+    car_mode = OBSTACLE;
     request->send(200, "text/html", MAIN_page);
-    obstacle_drive();
+//    obstacle_drive();
   });
-
-  //  server.on("/backward", HTTP_GET, handle_backward);
-  //  server.on("/left", HTTP_GET, handle_left);
-  //  server.on("/right", HTTP_GET, handle_right);
-  //  server.on("/stop", HTTP_GET, handle_stop);
-  //  server.on("/obstacle", HTTP_GET, handle_obstacle);
-  //  server.on("/toy", HTTP_GET, handle_toy);
-
-  //  server.onNotFound(handle_NotFound);
+  server.on("/toyButton", HTTP_GET, [](AsyncWebServerRequest * request) {
+    String inputMessage;
+    // GET input1 value on <ESP_IP>/slider?value=<inputMessage>
+    if (request->hasParam(PARAM_INPUT)) {
+      inputMessage = request->getParam(PARAM_INPUT)->value();
+      flagToy = inputMessage == "1";
+      Serial.println((String) "flagToy: " + flagToy);
+    }
+    else {
+      inputMessage = "No message sent";
+    }
+    Serial.println(inputMessage);
+    request->send(200, "text/plain", "OK");
+  });
+  server.on("/slider", HTTP_GET, [] (AsyncWebServerRequest * request) {
+    String inputMessage;
+    // GET input1 value on <ESP_IP>/slider?value=<inputMessage>
+    if (request->hasParam(PARAM_INPUT)) {
+      inputMessage = request->getParam(PARAM_INPUT)->value();
+      sliderValue = inputMessage.toInt();
+    }
+    else {
+      inputMessage = "No message sent";
+    }
+    Serial.println(inputMessage);
+    request->send(200, "text/plain", "OK");
+  });
+  server.on("/doorButton", HTTP_GET, [] (AsyncWebServerRequest * request) {
+    flagDoor = true;
+//    runServoDoor();
+    request->send(200, "text/plain", "OK");
+  });
 
   //start server
   server.begin();
@@ -111,64 +148,109 @@ void setup() {
 
 // handle HTTP requests and control car
 void loop() {
-  //  server.handleClient(); //클라이언트의 요청이 있는 경우 클라이언트와의 연결과 요청에 대한 처리를 하는 함수입니다.
-  //  car_control();
   car_control(car_mode);
+  if (flagToy) {
+    if (sliderValue == 900) runRandomDelay();
+    else runServoToy(sliderValue);
+  }
+  if (flagDoor)  {
+    runServoDoor();
+  }  else {
+    
+  }
 }
 
-void handle_toy() {
+void runServoDoor() {
+    Serial.println("runServoDoor()");
+    servoDoor.attach(SERVO_DOOR_PIN);
+    servoDoor.write(130); //문열음
+    delay(60); //돌아가길 기다림
+    servoDoor.detach();//진동 심해서 추가
+    delay(3000); //3초 기다림
+    servoDoor.attach(SERVO_DOOR_PIN);
+    servoDoor.write(0);   //문닫음
+    delay(60);
+    servoDoor.detach(); 
+    flagDoor = false;
+}
+
+void runServoToy(int delay_time) { //delay는 300이상 이어야..
+  Serial.println((String) "delay_time: "+ delay_time);
+//  while (true) {
+    servoToy.write(180); //최대각도
+    delay(delay_time);
+      servoToy.write(0); //최소각도
+    delay(delay_time);
+//  }
+}
+void runRandomDelay() { //
+  int delay_time;
+//  while (true) {
+    delay_time = random(300, 900);
+    servoToy.write(0);
+    delay(delay_time);
+    servoToy.write(180);
+    delay_time = random(300, 900);
+    delay(delay_time);
+//  }
 }
 
 void obstacle_drive() {
-  //  while(true) {
-  Serial.println("obstacle_drive()");
-  long distance = Distance_Measurement();  //전방 거리측정
-  Serial.println((String) "obstacle_drive함수내 distance: " + distance);
+  while (true) {
+    if (car_mode == STOP) break;
+    Serial.println("obstacle_drive()");
+//    long distance = Distance_Measurement();  //전방 거리측정
+    long distance = Distance_Measurement();  //전방 거리측정
+    Serial.println((String) "obstacle_drive함수내 distance: " + distance);
 
-  if (distance > 30) //전방 거리가 30cm 초과일때 보통 속도로 전진
-  {
-    //      Forward(1000);
-    car_control(GO_FORWARD);
-  }
-  else if (distance > 20) //30>= 전방거리 > 15cm 일때 장애물 회피
-  {
-    int val = random(2);
-    if (val == 0) {
-      //        Right(1000);
-      car_control(TURN_RIGHT);
-      delay(TURN90);
+    if (distance > 30) //전방 거리가 30cm 초과일때 보통 속도로 전진
+    {
+      //      Forward(1000);
+      car_control(GO_FORWARD);
     }
-    else if (val == 1) {
-//      Left(1000);
-      car_control(TURN_LEFT);
-      delay(TURN90);
+    else if (distance > 20) //30>= 전방거리 > 15cm 일때 장애물 회피
+    {
+      int val = random(2);
+      if (val == 0) {
+        //        Right(1000);
+        car_control(TURN_RIGHT);
+        delay(TURN90);
+      }
+      else if (val == 1) {
+        //      Left(1000);
+        car_control(TURN_LEFT);
+        delay(TURN90);
+      }
+      car_control(STOP);
+      //    Stop();
+      delay(300); //
+    } else { //전방거리 15센치 이하일떄 뒤로감
+      //    Backward(1000);
+      car_control(GO_BACKWARD);
+      delay(500);
+      //    Right(1000);
+      //    delay(TURN90*2);
+      car_control(STOP);
+      delay(300); //
     }
-    car_control(STOP);
-//    Stop();
-    delay(300); //
-  } else { //전방거리 15센치 이하일떄 뒤로감
-//    Backward(1000);
-    car_control(GO_BACKWARD);
-    delay(500);
-    //    Right(1000);
-    //    delay(TURN90*2);
-    car_control(STOP);
-    delay(300); //
   }
-  //  }
 }
 long Distance_Measurement() {
   long duration, distance;
+  // Clears the trigPin
+  digitalWrite(TRIGPIN, LOW);
+  delayMicroseconds(2);
+  
   digitalWrite(TRIGPIN, HIGH);  // trigPin에서 초음파 발생(echoPin도 HIGH)
   delayMicroseconds(10);
   digitalWrite(TRIGPIN, LOW);
   duration = pulseIn(ECOPIN, HIGH);    // echoPin 이 HIGH를 유지한 시간을 저장 한다.
-  distance = ((float)(340 * duration) / 1000) / 2;
-  Serial.print((String) "Distance_Measurement()함수" + distance);
-  Serial.println("mm");
-  distance = (float)distance / 10;
-  Serial.print((String) "Distance_Measurement()함수" + distance);
-  Serial.println("cm");
+  distance = ((float)(SOUND_VELOCITY * duration) / 10000) / 2;
+//  distance = duration * * SOUND_VELOCITY/2;
+//  Serial.print((String) "Distance_Measurement()함수" + distance);
+//  Serial.println("mm");
+//  distance = (float)distance / 10;
+  Serial.print((String) "Distance_Measurement()함수" + distance + "cm");
   return distance;
 }
 // control car movement
@@ -208,6 +290,9 @@ void car_control(int car_mode) { //매개변수 추가
       digitalWrite(LEFT_MOTOR_PIN2, LOW);
       digitalWrite(RIGHT_MOTOR_PIN1, LOW);
       analogWrite(RIGHT_MOTOR_PIN2, MOTOR_SPEED);
+      break;
+    case OBSTACLE: // turn right 후진 (역방향, 역방향)
+      obstacle_drive();
       break;
 defalt:
       break;
