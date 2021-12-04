@@ -18,7 +18,6 @@ const int output = 2;
 
 int sliderValue = 400; //초깃값
 boolean flagToy = false;
-
 const char* PARAM_INPUT = "value";
 
 // Create AsyncWebServer object on port 80

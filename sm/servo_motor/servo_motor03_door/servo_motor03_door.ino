@@ -1,4 +1,4 @@
-A//https://www.youtube.com/watch?v=ZsvNVPCetmI&ab_channel=H_World 보고 서보모터 소음잡는 코드로 수정
+//https://www.youtube.com/watch?v=ZsvNVPCetmI&ab_channel=H_World 보고 서보모터 소음잡는 코드로 수정
 #include <Servo.h>
 Servo myservo; // create servo object to control a servo
 int pos = 0; // variable to store the servo position

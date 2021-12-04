@@ -47,7 +47,7 @@ const char index_html[] PROGMEM = R"rawliteral(
         toy.style.background = "white"
     }
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "servoButton?value="+document.getElementById("toyButton").value, true);
+    xhr.open("GET", "toyButton?value="+document.getElementById("toyButton").value, true);
     xhr.send();
 
   }

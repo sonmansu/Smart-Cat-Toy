@@ -1,7 +1,7 @@
 //int trigPin = A0;
 //int echoPin = A1;
-int trigPin = D10;
-int echoPin = D11;
+int trigPin = D12;
+int echoPin = D13;
 
 void setup() {
   Serial.begin(9600);       // 시리얼 속도 설정
