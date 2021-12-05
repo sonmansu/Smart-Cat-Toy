@@ -7,5 +7,5 @@
         4. 초음파센서 연결, 자율주행 기능 : https://m.blog.naver.com/no1_devicemart/221312209045
         5. 서보모터 - 장난감
         6. ESP8266WebServer.h를 ESPAsyncWebServer.h 바꿨음 (Slider)
+        7. 서보모터 - 문 여닫기 
             */
-

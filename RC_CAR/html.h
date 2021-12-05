@@ -66,8 +66,38 @@ const char MAIN_page[] PROGMEM = R"=====(
     <br>
     <!-- 간식주기-->
     <p><button onclick="doorButtonOnClick()" id="doorButton" value = "0">간식주기</button></p>
-
+    <br>
+<!--    고양감지-->
+    <p><button onclick="detectOnClick()" id="detectButton">고양이 감지</button></p>
+    <p> <span id = "textDetect">감지되지 않았습니다.</span></p>
     <script>
+<!--    고양감지-->
+            function readBody(xhr) {
+                var data;
+                if (!xhr.responseType || xhr.responseType === "text") {
+                    data = xhr.responseText;
+                } else if (xhr.responseType === "document") {
+                    data = xhr.responseXML;
+                } else {
+                    data = xhr.response;
+                }
+                return data;
+            }
+
+          var xhtr = new XMLHttpRequest();
+          function detectOnClick() {
+              xhtr.open("GET", "detectButton", true);
+              xhtr.send();
+          }
+
+          xhtr.onreadystatechange = function() {
+              if (xhtr.readyState == 4) {
+                    console.log(readBody(xhtr));
+                  document.getElementById("textDetect").innerHTML = readBody(xhtr);
+
+            }
+        }
+
 <!--          장난감-->
           function updateSliderDelay(element) {
             var sliderValue = document.getElementById("toyDelaySlider").value;
@@ -105,7 +135,7 @@ const char MAIN_page[] PROGMEM = R"=====(
             xhr.send();
           }
         </script>
-    
+
 
 
 </div>

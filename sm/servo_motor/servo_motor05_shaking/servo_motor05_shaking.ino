@@ -1,6 +1,6 @@
 /* 서보모터 떨림증상 잡기 위한 코드
  *  https://rasino.tistory.com/250 걍 디테치어테치 하는게 최선인듯 
- */
+ */ㅋ
 #include <Servo.h>
 Servo myservo; // create servo object to control a servo
 int pos = 0; // variable to store the servo position
